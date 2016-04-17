@@ -1,9 +1,11 @@
 package debugger;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -15,10 +17,7 @@ public class ExcelWriter {
 	private Workbook book; 
 	private Sheet sheet;
 	
-	private int bookSize = 0;
-	
 	public ExcelWriter(){
-		this.bookSize = 0;
 	}
 
 	public void start(){
@@ -34,7 +33,6 @@ public class ExcelWriter {
         	row.createCell(i).setCellValue(titles[i]); 
         }
         
-        bookSize = 1;
 	}
 	
 	public void export(List<LogContent> logs, String fileName){
@@ -58,10 +56,18 @@ public class ExcelWriter {
         	sheet.autoSizeColumn(i);
         }
         
-        writeToExcel(fileName);
+        writeToExcel(fileName, logs);
 	}
 
-	private void writeToExcel(String fileName){
+	private void writeToExcel(String fileName, List<LogContent> logs){
+		
+		File file = new File(fileName + ".xlsx");
+		if(file.exists() && logs.size()==1){
+			String newOldFileName = fileName + UUID.randomUUID() + ".xlsx"; 
+			File newOldFile = new File(newOldFileName);
+			file.renameTo(newOldFile);
+		}
+		
 		try {
 			FileOutputStream fileOut = new FileOutputStream(fileName + ".xlsx");
 			book.write(fileOut); 

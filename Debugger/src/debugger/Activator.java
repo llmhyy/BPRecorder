@@ -41,6 +41,8 @@ public class Activator extends AbstractUIPlugin {
 		super.start(context);
 		plugin = this;
 		
+		
+		
 //		JavaBreakpointActionDelegate delegate = new JavaBreakpointActionDelegate();
 		DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(new IBreakpointListener() {
 			
@@ -65,6 +67,12 @@ public class Activator extends AbstractUIPlugin {
 			}
 			
 			private void recordToExcel(IBreakpoint breakpoint, String operation) {
+				
+				boolean is = false;
+				if(is){
+					return;
+				}
+				
 				if(breakpoint instanceof JavaLineBreakpoint){
 					JavaLineBreakpoint javaBP = (JavaLineBreakpoint)breakpoint;
 					try {
