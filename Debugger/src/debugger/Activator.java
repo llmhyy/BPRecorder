@@ -8,6 +8,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointListener;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -41,15 +42,15 @@ public class Activator extends AbstractUIPlugin {
 		super.start(context);
 		plugin = this;
 		
-		
+		JavaCore.addElementChangedListener(new PrintCodeListener());
 		
 //		JavaBreakpointActionDelegate delegate = new JavaBreakpointActionDelegate();
 		DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(new IBreakpointListener() {
 			
 			@Override
 			public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
-				String operation = LogContent.REMOVE;
-				recordToExcel(breakpoint, operation);
+//				String operation = LogContent.REMOVE;
+//				recordToExcel(breakpoint, operation);
 				
 			}
 			
@@ -79,7 +80,7 @@ public class Activator extends AbstractUIPlugin {
 						int lineNumber = javaBP.getLineNumber();
 						String typeName = javaBP.getTypeName();
 						
-						String reason = UI.getUserReason();
+						Reason reason = UI.getUserReason();
 						
 						if(reason != null){
 							LogContent content = new LogContent(typeName, lineNumber, operation, reason);

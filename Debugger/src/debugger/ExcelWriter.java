@@ -28,7 +28,13 @@ public class ExcelWriter {
         String titles[] = {"operation",
         		"class name",
         		"line number",
-        		"reason"};
+        		"code understanding",
+        		"program semantic inspection",
+        		"variable tracking",
+        		"variable inspection",
+        		"intuition",
+        		"intuition reason",
+        		"other reason"};
         for(int i = 0; i < titles.length; i++){
         	row.createCell(i).setCellValue(titles[i]); 
         }
@@ -44,7 +50,15 @@ public class ExcelWriter {
         		row.createCell(0).setCellValue(log.getBreakPointOperation());
         		row.createCell(1).setCellValue(log.getClassName());
         		row.createCell(2).setCellValue(log.getLineNumber());
-        		row.createCell(3).setCellValue(log.getReason());  
+        		
+        		Reason reason = log.getReason();
+        		row.createCell(3).setCellValue(reason.isCodeUnderstanding);
+        		row.createCell(4).setCellValue(reason.isProgramSemanticInspection);
+        		row.createCell(5).setCellValue(reason.isVariableTracking);
+        		row.createCell(6).setCellValue(reason.isVariableInspection);
+        		row.createCell(7).setCellValue(reason.isIntuition);
+        		row.createCell(8).setCellValue(reason.intuitionString);
+        		row.createCell(9).setCellValue(reason.otherReason);
         		
         		rowNo++;
         	}

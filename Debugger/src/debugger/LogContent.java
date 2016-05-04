@@ -4,13 +4,14 @@ public class LogContent {
 
 	public static final String ADD = "add";
 	public static final String REMOVE = "remove";
+	public static final String PRINT = "print";
 
 	private String className;
 	private int lineNumber;
 	private String breakPointOperation;
-	private String reason;
+	private Reason reason;
 
-	public LogContent(String className, int lineNumber, String breakPointOperation, String reason) {
+	public LogContent(String className, int lineNumber, String breakPointOperation, Reason reason) {
 		super();
 		this.className = className;
 		this.lineNumber = lineNumber;
@@ -34,11 +35,11 @@ public class LogContent {
 		this.lineNumber = lineNumber;
 	}
 
-	public String getReason() {
+	public Reason getReason() {
 		return reason;
 	}
 
-	public void setReason(String reason) {
+	public void setReason(Reason reason) {
 		this.reason = reason;
 	}
 
