@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Text;
 public class ReasonDialog extends TitleAreaDialog {
 	public static final String NONE = "None";
 	public static final String CODE_UNDERSTANDING = "Code Understanding";
-	public static final String PROGRAM_SEMANTIC_INSPECTION = "Program Semantic Understanding";
+	public static final String PROGRAM_SEMANTIC_INSPECTION = "Program Semantic Inspection";
 	public static final String VARIABLE_TRACKING = "Variable Tracking";
 	public static final String VARIABLE_INSPECTION = "Variable Inspection";
 	public static final String INTUITION = "Intuition";
