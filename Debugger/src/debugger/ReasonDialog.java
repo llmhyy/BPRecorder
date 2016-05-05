@@ -8,28 +8,36 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 public class ReasonDialog extends TitleAreaDialog {
-
-	private String codeUnderstandingText = "I am not sure what this segment of code is about. "
-			+ "I am just trying to understand its behaviors";
-	private String programSemanticsInspectionText = "I know what this part of the program should do, "
-			+ "I am checking if it is correctly implemented. (Input: in your mind, what the program should do? "
-			+ "Please brief it in natural language)";
-	private String variableTrackingText = "I think some variables are critical, "
-			+ "but I don¡¯t know how exactly their values are updated. I am trying to track this information. "
-			+ "(Input: what variable and why do you think they are critical? E.g. based on your intuition/experience, "
-			+ "based on the specification, etc.)";
-	private String variableInspectionText = "I know the expected value of these variables. "
-			+ "I am just checking if they have the correct values before/after execution. "
-			+ "(Input: What variable and what triggers you to check them? How did you figure out their expected values?) ";
-	private String intuitionText = "Just based on your intuition, "
-			+ "or based on some particular breakpoint you have seen an abnormal value, etc.";
+	public static final String NONE = "None";
+	public static final String CODE_UNDERSTANDING = "Code Understanding";
+	public static final String PROGRAM_SEMANTIC_INSPECTION = "Program Semantic Understanding";
+	public static final String VARIABLE_TRACKING = "Variable Tracking";
+	public static final String VARIABLE_INSPECTION = "Variable Inspection";
+	public static final String INTUITION = "Intuition";
+	
+	public String codeUnderstandingText = "Code Understanding: I am not sure what this segment of code is about. \n"
+			+ "I am just trying to understand its behaviors\n";
+	public String programSemanticsInspectionText = "Program Semantic Inspection: I know what this part of the program should do, \n"
+			+ "I am checking if it is correctly implemented. (Input: in your mind, what the program should do? \n"
+			+ "Please brief it in natural language)\n";
+	public String variableTrackingText = "Variable Tracking: I think some variables are critical, \n"
+			+ "but I don¡¯t know how exactly their values are updated. I am trying to track this information. \n"
+			+ "(Input: what variable and why do you think they are critical? E.g. based on your intuition/experience, \n"
+			+ "based on the specification, etc.)\n";
+	public String variableInspectionText = "Variable Inspection: I know the expected value of these variables. \n"
+			+ "I am just checking if they have the correct values before/after execution. \n"
+			+ "(Input: What variable and what triggers you to check them? How did you figure out their expected values?) \n";
+	public String intuitionText = "Intuition: Just based on your intuition, \n"
+			+ "or based on some particular breakpoint you have seen an abnormal value, etc.\n";
 	
 	private Text reasonText;
 	private String otherReasonString = "";
@@ -43,6 +51,13 @@ public class ReasonDialog extends TitleAreaDialog {
 	private boolean isVariableInspection = false;
 	private boolean isIntuition = false;
 	
+	private Text comprehensionText;
+	private String comprehensionString = "";
+	private Text variableText;
+	private String variableString = "";
+	
+	private Combo programComprehensionCombo;
+	private Combo variableCombo;
 
 	public ReasonDialog(Shell parentShell) {
 		super(parentShell);
@@ -89,18 +104,33 @@ public class ReasonDialog extends TitleAreaDialog {
 		
 		group.setText("Program Comprehension");
 		
-		GridLayout layout = new GridLayout(2, true);
+		GridLayout layout = new GridLayout(1, true);
 		group.setLayout(layout);
 		
-		Button codeUnderstandingButton = new Button(group, SWT.RADIO);
-		codeUnderstandingButton.setText("Code Understanding");
-		codeUnderstandingButton.setToolTipText(codeUnderstandingText);
-		codeUnderstandingButton.addSelectionListener(new SelectionListener() {
+		programComprehensionCombo = new Combo(group, SWT.READ_ONLY);
+		programComprehensionCombo.setItems(new String[]{
+				NONE,
+				CODE_UNDERSTANDING,
+				PROGRAM_SEMANTIC_INSPECTION
+		});
+		programComprehensionCombo.select(0);
+		
+		programComprehensionCombo.addSelectionListener(new SelectionListener() {
 			
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				isCodeUnderstanding = true;
-				isProgramSemanticsInspection = false;
+				if(programComprehensionCombo.getSelectionIndex() == 0){
+					isCodeUnderstanding = false;
+					isProgramSemanticsInspection = false;
+				}
+				else if(programComprehensionCombo.getSelectionIndex() == 1){
+					isCodeUnderstanding = true;
+					isProgramSemanticsInspection = false;
+				}
+				else if(programComprehensionCombo.getSelectionIndex() == 2){
+					isCodeUnderstanding = false;
+					isProgramSemanticsInspection = true;
+				}
 			}
 			
 			@Override
@@ -108,25 +138,58 @@ public class ReasonDialog extends TitleAreaDialog {
 				
 			}
 		});
+		String explanation = codeUnderstandingText + '\n' + programSemanticsInspectionText;
+		programComprehensionCombo.setToolTipText(explanation);
 		
+		Label label = new Label(group, SWT.NONE);
+		label.setText("Specifics: ");
 		
-		Button programSemanticsInspectionButton = new Button(group, SWT.RADIO);
-		programSemanticsInspectionButton.setText("Program Semantic Inspection");
-		programSemanticsInspectionButton.setToolTipText(programSemanticsInspectionText);
-		programSemanticsInspectionButton.addSelectionListener(new SelectionListener() {
-			
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				isCodeUnderstanding = false;
-				isProgramSemanticsInspection = true;
-				
-			}
-			
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				
-			}
-		});
+		GridData textData = new GridData();
+		textData.grabExcessHorizontalSpace = true;
+		textData.grabExcessVerticalSpace = true;
+		textData.horizontalAlignment = GridData.FILL;
+		textData.verticalAlignment = GridData.FILL;
+		textData.heightHint = 30;
+		
+		comprehensionText = new Text(group, SWT.MULTI | SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
+		comprehensionText.setLayoutData(textData);
+		
+//		Button codeUnderstandingButton = new Button(group, SWT.RADIO);
+//		
+//		codeUnderstandingButton.setText("Code Understanding");
+//		codeUnderstandingButton.setToolTipText(codeUnderstandingText);
+//		codeUnderstandingButton.addSelectionListener(new SelectionListener() {
+//			
+//			@Override
+//			public void widgetSelected(SelectionEvent e) {
+//				isCodeUnderstanding = true;
+//				isProgramSemanticsInspection = false;
+//			}
+//			
+//			@Override
+//			public void widgetDefaultSelected(SelectionEvent e) {
+//				
+//			}
+//		});
+//		
+//		
+//		Button programSemanticsInspectionButton = new Button(group, SWT.RADIO);
+//		programSemanticsInspectionButton.setText("Program Semantic Inspection");
+//		programSemanticsInspectionButton.setToolTipText(programSemanticsInspectionText);
+//		programSemanticsInspectionButton.addSelectionListener(new SelectionListener() {
+//			
+//			@Override
+//			public void widgetSelected(SelectionEvent e) {
+//				isCodeUnderstanding = false;
+//				isProgramSemanticsInspection = true;
+//				
+//			}
+//			
+//			@Override
+//			public void widgetDefaultSelected(SelectionEvent e) {
+//				
+//			}
+//		});
 		
 	}
 	
@@ -142,18 +205,33 @@ public class ReasonDialog extends TitleAreaDialog {
 		
 		group.setText("Variable Related");
 		
-		GridLayout layout = new GridLayout(2, true);
+		GridLayout layout = new GridLayout(1, true);
 		group.setLayout(layout);
 		
-		Button variableTrackingButton = new Button(group, SWT.RADIO);
-		variableTrackingButton.setText("Variable Tracking");
-		variableTrackingButton.setToolTipText(variableTrackingText);
-		variableTrackingButton.addSelectionListener(new SelectionListener() {
+		variableCombo = new Combo(group, SWT.READ_ONLY);
+		variableCombo.setItems(new String[]{
+				NONE,
+				VARIABLE_TRACKING,
+				VARIABLE_INSPECTION
+		});
+		variableCombo.select(0);
+		
+		variableCombo.addSelectionListener(new SelectionListener() {
 			
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				isVariableTracking = true;
-				isVariableInspection = false;
+				if(variableCombo.getSelectionIndex() == 0){
+					isVariableTracking = false;
+					isVariableInspection = false;
+				}
+				else if(variableCombo.getSelectionIndex() == 1){
+					isVariableTracking = true;
+					isVariableInspection = false;
+				}
+				else if(variableCombo.getSelectionIndex() == 2){
+					isVariableTracking = false;
+					isVariableInspection = true;
+				}
 			}
 			
 			@Override
@@ -161,25 +239,57 @@ public class ReasonDialog extends TitleAreaDialog {
 				
 			}
 		});
+		String explanation = variableTrackingText + '\n' + variableInspectionText;
+		variableCombo.setToolTipText(explanation);
 		
+		Label label = new Label(group, SWT.NONE);
+		label.setText("Specifics: ");
 		
-		Button variableInspectionButton = new Button(group, SWT.RADIO);
-		variableInspectionButton.setText("Variable Inspection");
-		variableInspectionButton.setToolTipText(variableInspectionText);
-		variableInspectionButton.addSelectionListener(new SelectionListener() {
-			
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				isVariableTracking = false;
-				isVariableInspection = true;
-				
-			}
-			
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				
-			}
-		});
+		GridData textData = new GridData();
+		textData.grabExcessHorizontalSpace = true;
+		textData.grabExcessVerticalSpace = true;
+		textData.horizontalAlignment = GridData.FILL;
+		textData.verticalAlignment = GridData.FILL;
+		textData.heightHint = 30;
+		
+		variableText = new Text(group, SWT.MULTI | SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
+		variableText.setLayoutData(textData);
+		
+//		Button variableTrackingButton = new Button(group, SWT.RADIO);
+//		variableTrackingButton.setText("Variable Tracking");
+//		variableTrackingButton.setToolTipText(variableTrackingText);
+//		variableTrackingButton.addSelectionListener(new SelectionListener() {
+//			
+//			@Override
+//			public void widgetSelected(SelectionEvent e) {
+//				isVariableTracking = true;
+//				isVariableInspection = false;
+//			}
+//			
+//			@Override
+//			public void widgetDefaultSelected(SelectionEvent e) {
+//				
+//			}
+//		});
+//		
+//		
+//		Button variableInspectionButton = new Button(group, SWT.RADIO);
+//		variableInspectionButton.setText("Variable Inspection");
+//		variableInspectionButton.setToolTipText(variableInspectionText);
+//		variableInspectionButton.addSelectionListener(new SelectionListener() {
+//			
+//			@Override
+//			public void widgetSelected(SelectionEvent e) {
+//				isVariableTracking = false;
+//				isVariableInspection = true;
+//				
+//			}
+//			
+//			@Override
+//			public void widgetDefaultSelected(SelectionEvent e) {
+//				
+//			}
+//		});
 	}
 	
 	private void createIntuitionGroup(Composite container) {
@@ -254,6 +364,8 @@ public class ReasonDialog extends TitleAreaDialog {
 	private void saveInput() {
 		this.setReason(this.reasonText.getText());
 		this.setIntuitionString(this.inText.getText());
+		this.setComprehensionString(this.comprehensionText.getText());
+		this.setVariableString(this.variableText.getText());
 	}
 
 	@Override
@@ -316,6 +428,22 @@ public class ReasonDialog extends TitleAreaDialog {
 
 	public void setIntuition(boolean isIntuition) {
 		this.isIntuition = isIntuition;
+	}
+
+	public String getComprehensionString() {
+		return comprehensionString;
+	}
+
+	public void setComprehensionString(String comprehensionString) {
+		this.comprehensionString = comprehensionString;
+	}
+
+	public String getVariableString() {
+		return variableString;
+	}
+
+	public void setVariableString(String variableString) {
+		this.variableString = variableString;
 	}
 
 	

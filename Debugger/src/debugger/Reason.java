@@ -6,6 +6,8 @@ public class Reason {
 	boolean isVariableTracking;
 	boolean isVariableInspection;
 	boolean isIntuition;
+	public String comprehensionDetail;
+	public String variableDetail;
 	String intuitionString;
 	String otherReason;
 	

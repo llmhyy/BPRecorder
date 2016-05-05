@@ -25,6 +25,8 @@ public class UI {
 		        	reason.isIntuition = dialog.isIntuition();
 		        	reason.intuitionString = dialog.getIntuitionString();
 		        	reason.otherReason = dialog.getOtherReason();
+		        	reason.comprehensionDetail = dialog.getComprehensionString();
+		        	reason.variableDetail = dialog.getVariableString();
 		        }
 		        
 		    }

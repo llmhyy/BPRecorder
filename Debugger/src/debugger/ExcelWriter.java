@@ -30,8 +30,10 @@ public class ExcelWriter {
         		"line number",
         		"code understanding",
         		"program semantic inspection",
+        		"comprehension detail",
         		"variable tracking",
         		"variable inspection",
+        		"variable detail",
         		"intuition",
         		"intuition reason",
         		"other reason"};
@@ -54,11 +56,13 @@ public class ExcelWriter {
         		Reason reason = log.getReason();
         		row.createCell(3).setCellValue(reason.isCodeUnderstanding);
         		row.createCell(4).setCellValue(reason.isProgramSemanticInspection);
-        		row.createCell(5).setCellValue(reason.isVariableTracking);
-        		row.createCell(6).setCellValue(reason.isVariableInspection);
-        		row.createCell(7).setCellValue(reason.isIntuition);
-        		row.createCell(8).setCellValue(reason.intuitionString);
-        		row.createCell(9).setCellValue(reason.otherReason);
+        		row.createCell(5).setCellValue(reason.comprehensionDetail);
+        		row.createCell(6).setCellValue(reason.isVariableTracking);
+        		row.createCell(7).setCellValue(reason.isVariableInspection);
+        		row.createCell(8).setCellValue(reason.variableDetail);
+        		row.createCell(9).setCellValue(reason.isIntuition);
+        		row.createCell(10).setCellValue(reason.intuitionString);
+        		row.createCell(11).setCellValue(reason.otherReason);
         		
         		rowNo++;
         	}
@@ -66,7 +70,7 @@ public class ExcelWriter {
 			e.printStackTrace();
 		}
         
-        for(int i=0; i<4; i++){
+        for(int i=0; i<12; i++){
         	sheet.autoSizeColumn(i);
         }
         
