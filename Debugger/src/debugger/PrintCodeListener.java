@@ -106,7 +106,11 @@ public class PrintCodeListener implements IElementChangedListener {
 	}
 	
 	public String getFullNameOfCompilationUnit(CompilationUnit cu){
-		String packageName = cu.getPackage().getName().toString();
+		
+		String packageName = "";
+		if(cu.getPackage() != null){
+			packageName = cu.getPackage().getName().toString();
+		}
 		AbstractTypeDeclaration typeDeclaration = (AbstractTypeDeclaration) cu.types().get(0);
 		String typeName = typeDeclaration.getName().getIdentifier();
 		
