@@ -115,7 +115,7 @@ public class PrintCodeListener implements IElementChangedListener {
 	
 	@SuppressWarnings("rawtypes")
 	public CompilationUnit convertICompilationUnitToASTNode(ICompilationUnit iunit){
-		ASTParser parser = ASTParser.newParser(AST.JLS8);
+		ASTParser parser = ASTParser.newParser(AST.JLS4);
 		Map options = JavaCore.getOptions();
 		JavaCore.setComplianceOptions(JavaCore.VERSION_1_7, options);
 		parser.setCompilerOptions(options);
